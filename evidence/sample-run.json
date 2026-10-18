@@ -1,0 +1,1055 @@
+{
+  "config": {
+    "baseUrl": "https://api.particle.ai/v1",
+    "apiKey": "[redacted]",
+    "model": "deepseek-v41-flash-1017",
+    "temperature": 0
+  },
+  "tasks": [
+    "invoices",
+    "csv",
+    "changelog",
+    "email"
+  ],
+  "result": {
+    "baseline": {
+      "harness": {
+        "systemPrompt": "You are a helpful assistant. Answer the user accurately.",
+        "guardrails": [],
+        "toolGuidance": "",
+        "skills": [],
+        "memory": []
+      },
+      "score": 0.19375,
+      "attempts": [
+        {
+          "taskId": "invoices",
+          "variant": "public",
+          "raw": "Booked invoices (duplicates collapsed; credit note excluded):\n\n| Vendor | Invoice | Invoice date | Terms | Due date | Currency | Amount booked |\n|---|---|---|---:|---|---:|---:|\n| Brightline Studio | BS-1042 | 2026-03-02 | Net 30 | 2026-04-01 | USD | 963.60 |\n| Kestrel Freight | KF-77 | 2026-03-12 | Net 14 | 2026-03-26 | EUR | 860.00 |\n| Vantablack Labs | VL-9 | 2026-03-10 | Net 45 | 2026-04-24 | USD | 350.00 |\n| Halcyon Cloud | HC-11 | 2026-03-08 | Net 60 | 2026-05-07 | USD | 1,496.00 |\n\nNotes:\n- Brightline BS-1042 appeared twice; collapsed to one row. 20% courtesy discount applied: $1,204.50 × 80% = $963.60.\n- Vantablack VL-9 booked net of $50 credit: $400.00 − $50.00 = $350.00.\n- Halcyon HC-11 booked net of 15% partner discount: $1,760.00 × 85% = $1,496.00.\n- Northwind credit note CN-3 was not booked per instruction.\n- Kestrel KF-77 remains in EUR; no FX rate was provided for conversion.",
+          "score": 0,
+          "passed": false,
+          "failures": [
+            "answer was not parseable as the requested JSON (no JSON value found in answer); started with: \"Booked invoices (duplicates collapsed; credit note excluded): | Vendor | Invoice | Invoic\""
+          ],
+          "tokens": 1608,
+          "ms": 4000.539833
+        },
+        {
+          "taskId": "csv",
+          "variant": "public",
+          "raw": "Fixed CSV (removed blank line, deduplicated exact duplicate rows, normalized `total` to 2 decimals, sorted by `id`):\n\n```csv\nid,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00\n```\n\nChanges made:\n- Removed the blank line.\n- Removed duplicate rows for `id=3` and `id=2`.\n- Normalized all `total` values to two decimal places.\n- Removed thousands separators from numeric totals so they are machine-readable.\n- Sorted rows by `id`.",
+          "score": 0,
+          "passed": false,
+          "failures": [
+            "header: expected \"id,name,city,total\", got \"csv\"",
+            "line 2: expected \"1,Globex,Mumbai,980.00\", got \"id,name,city,total\"",
+            "line 3: expected \"2,\"Initech, Ltd.\",Delhi,1500.00\", got \"1,Globex,Mumbai,980.00\"",
+            "line 4: expected \"3,\"Acme, Inc.\",Pune,1240.50\", got \"2,\"Initech, Ltd.\",Delhi,1500.00\"",
+            "line 5: expected \"4,Umbrella,Chennai,1200.50\", got \"3,\"Acme, Inc.\",Pune,1240.50\"",
+            "line 6: expected \"5,\"Wonka, Ltd.\",Goa,75.00\", got \"4,Umbrella,Chennai,1200.50\"",
+            "line 7: expected \"6,Nakatomi,Hyderabad,0.00\", got \"5,\"Wonka, Ltd.\",Goa,75.00\"",
+            "expected 7 lines, got 8"
+          ],
+          "tokens": 1195,
+          "ms": 3250.2310420000003
+        },
+        {
+          "taskId": "changelog",
+          "variant": "public",
+          "raw": "## 2.14.0\n\n### ⚠️ Breaking Changes\n- Drop Node.js 18 support; Node.js 20 or later is now required. (#412)\n\n### Features\n- Add CSV export to the reports page. (#418)\n- Add keyboard shortcuts for the queue view. (#423)\n\n### Bug Fixes\n- Stop duplicate webhook deliveries on retry. (#421)\n- Fix timezone drift in the weekly digest. (#425)\n- Fix crash when a filter returns no rows. (#430)\n\n### Chores\n- Bump Prettier to 3.4. (#415)\n- Remove unused feature flags. (#427)",
+          "score": 0.375,
+          "passed": false,
+          "failures": [
+            "sections: expected ## Breaking, ## Added, ## Fixed in that order, got [\"2.14.0\"]",
+            "chore references must not appear: #415, #427 leaked in",
+            "references are not in the right section (features under Added, fixes under Fixed, the breaking change under Breaking)",
+            "forbidden punctuation: em dash, en dash or semicolon found",
+            "the Breaking bullet must name Node 20 exactly once"
+          ],
+          "tokens": 663,
+          "ms": 1929.315541
+        },
+        {
+          "taskId": "email",
+          "variant": "public",
+          "raw": "**Subject:** 20 min next week? Invoice reconciliation pilot at Kestrel\n\nHi Dana,\n\nDuring the pilot, your team cut invoice reconciliation from 6 hours to 90 minutes per month end—a 4.5-hour reduction.\n\nSince your team runs a Python pipeline, I think there’s a practical path to extending that without adding friction to your current setup. Would you be open to a 20-minute call next week? I’ll keep it focused on what we saw in the pilot and get your read on whether it’s worth pursuing.\n\nWhat day and time works best for you?\n\nBest,\n[Your Name]",
+          "score": 0.4,
+          "passed": false,
+          "failures": [
+            "missing a line starting with \"Subject:\"",
+            "subject must be 1 to 6 words, got 0",
+            "body must be at most 90 words, got 95",
+            "exactly one question mark, got 3",
+            "em dash or en dash found",
+            "missing the signature \"Harish\""
+          ],
+          "tokens": 747,
+          "ms": 2545.2806250000003
+        }
+      ]
+    },
+    "steps": [
+      {
+        "step": 1,
+        "candidates": [
+          {
+            "kind": "invariant",
+            "harness": {
+              "systemPrompt": "You are a precise analytical assistant. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters), then build the artifact, then re-read your own draft and check it against each of those constraints before you reply. When a constraint and your draft disagree, fix the draft, not the constraint.",
+              "guardrails": [
+                "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly vendor, amountCents, currency, dueDate. amountCents is the final payable amount in integer cents after any discount or credit. curre",
+                "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+                "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words. Include each feature and fix reference exactly once, in the section it belongs to. Never men",
+                "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+                "The first character of the reply is the first character of the artifact and the last character is the last character of the artifact. Never open with a label, a title, a sentence of context, or a code fence unless the requested format is itself a code block.",
+                "Do the sorting, arithmetic and counting yourself and verify them in the draft: count words, question marks, bullets and sections, confirm the sort order, and confirm every banned character and banned phrase is absent before replying.",
+                "Compute money in integer cents, apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+                "Never drop, merge or invent records beyond the deduplication or exclusion rule the request states, and keep every source field value verbatim except where the required format changes it."
+              ],
+              "toolGuidance": "No external tools are needed or assumed. Read the request carefully, do all extraction, sorting, arithmetic and counting yourself, and verify the finished artifact by re-reading it line by line against the stated constraints. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+              "skills": [
+                {
+                  "name": "json-record-artifacts",
+                  "steps": [
+                    "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                    "Build one object per record, collapsing duplicates and excluding items exactly as the request specifies.",
+                    "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                    "Normalise currency to ISO 4217 and dates to YYYY-MM-DD.",
+                    "Sort the array by the required key ascending before serialising.",
+                    "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+                  ]
+                },
+                {
+                  "name": "csv-repair",
+                  "steps": [
+                    "Parse the source rows and drop every blank line.",
+                    "Drop duplicate rows, keeping the first occurrence.",
+                    "Sort the remaining rows by id in ascending numeric order.",
+                    "Format totals as plain decimals with exactly two places and no thousands separator.",
+                    "Quote only fields that contain a comma and leave every other field unquoted.",
+                    "Emit the header exactly id,name,city,total followed by the rows, with no prose and no code fence."
+                  ]
+                },
+                {
+                  "name": "changelog-assembly",
+                  "steps": [
+                    "Classify each shipped change as a breaking change, a feature or a fix, and discard chore commits entirely so their references never appear.",
+                    "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                    "Put exactly one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                    "Include each feature and fix reference exactly once and only in its own section.",
+                    "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                    "Strip every em dash, en dash and semicolon, then output markdown only with no prose before or after."
+                  ]
+                },
+                {
+                  "name": "email-drafting",
+                  "steps": [
+                    "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                    "Write a body of at most 90 words that states the purpose in the first sentence and never uses the banned openers.",
+                    "Include both pilot numbers exactly as given, inside the body.",
+                    "Use exactly one question mark in the whole email and no exclamation marks, links or em dashes.",
+                    "Sign off as 'Harish'.",
+                    "Count the body words, the question marks and the subject words in the draft, and trim until each limit is met."
+                  ]
+                }
+              ],
+              "memory": [
+                "Most lost points come from format, not analysis: wrong container, extra prose, wrong order, or a missed limit. Check the container and ordering first.",
+                "Before replying, list the hard constraints of the request (format, key names, header, headings, sort order, word and item limits, banned characters and phrases) and tick each one against the draft.",
+                "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+                "Numeric answers are recomputed once from scratch and compared to the first result before being emitted.",
+                "Only the changes the request asks for are applied; everything else in the source is preserved verbatim."
+              ]
+            },
+            "probeScore": 1,
+            "probeAttempts": [
+              {
+                "taskId": "invoices",
+                "variant": "public",
+                "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 2739,
+                "ms": 4229.554917000001
+              },
+              {
+                "taskId": "csv",
+                "variant": "public",
+                "raw": "id,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 2097,
+                "ms": 1849.8761670000004
+              }
+            ],
+            "rationale": "Propose invariant edits: general habits that would prevent this class of failure on ANY analytical task (output discipline, verification steps, arithmetic and format checks)."
+          },
+          {
+            "kind": "domain",
+            "harness": {
+              "systemPrompt": "You are a finance-ops and data-cleanup assistant. Answer the user accurately, and return exactly the artifact the request asks for, in the exact format it specifies, with no surrounding prose, commentary or code fences. When a request names keys, headers, section headings, sort orders, limits or banned characters, treat every one of them as a hard constraint that is checked mechanically.",
+              "guardrails": [
+                "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fences, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON.",
+                "Invoices request: return one JSON array only, sorted by dueDate ascending. Each object has exactly the keys vendor, amountCents, currency, dueDate. amountCents is the final payable amount in integer cents after any discount or credit. currency is ISO 4217. dueDate is YYYY-MM-DD. Collapse duplicate i",
+                "CSV repair request: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fi",
+                "Changelog request: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words. Include each feature and fix reference exactly once, in the section it belongs to. Never menti",
+                "Email request: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks. No links. No em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching o",
+                "Never invent, guess or pad values: derive every field, number and reference from the source material, drop entries whose required values are missing rather than fabricating them, and keep amounts as exact decimal-to-cent conversions.",
+                "Before returning, self-check mechanically: count subject words, body words, words per bullet and total words; count question marks and banned characters; confirm the header line, the section order, the sort order and that every reference appears exactly once. Fix violations before answering, never a",
+                "If the request's format conflicts with any habit of yours, the request wins: match its key names, header text, heading text, ordering and limits character for character."
+              ],
+              "toolGuidance": "No external tools are available. Do all parsing, deduplication, sorting, unit conversion and arithmetic internally and verify before answering: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, and re-count words and question marks. Keep derivation notes out of the answer; the answer contains only the artifact.",
+              "skills": [
+                {
+                  "name": "invoices-to-json",
+                  "steps": [
+                    "Extract every invoice record from the source; discard credit notes and non-payable lines.",
+                    "Collapse duplicates by invoice identity, keeping one record per invoice.",
+                    "Apply discounts and credits to reach the final payable amount, then convert to integer cents with no rounding drift.",
+                    "Normalize currency to ISO 4217 and dueDate to YYYY-MM-DD.",
+                    "Sort ascending by dueDate, with a stable tiebreak so the order is reproducible.",
+                    "Emit a single JSON array of objects with exactly vendor, amountCents, currency, dueDate, and nothing else."
+                  ]
+                },
+                {
+                  "name": "csv-repair",
+                  "steps": [
+                    "Parse the raw text into rows and drop every blank line.",
+                    "Write the header exactly id,name,city,total.",
+                    "Drop duplicate rows, keeping the first occurrence of each.",
+                    "Normalize totals to plain decimals with two places and no thousands separator.",
+                    "Sort rows by id ascending numerically.",
+                    "Quote only fields that contain a comma and emit the CSV with no code fence and no commentary."
+                  ]
+                },
+                {
+                  "name": "changelog-markdown",
+                  "steps": [
+                    "Classify every commit as breaking, feature, fix or chore, and discard chores entirely.",
+                    "Place features under \"## Added\", fixes under \"## Fixed\", and the single breaking change under \"## Breaking\", naming the new requirement.",
+                    "Write one bullet per shipped change at no more than 14 words, citing each reference exactly once in its own section.",
+                    "Order the sections Breaking, Added, Fixed, with no prose before or after the markdown.",
+                    "Remove every em dash, en dash and semicolon, rephrasing rather than substituting punctuation.",
+                    "Count total words and confirm it stays at or under 120, trimming wording if needed."
+                  ]
+                },
+                {
+                  "name": "email-compose",
+                  "steps": [
+                    "Write the subject line as \"Subject:\" followed by at most 6 words.",
+                    "Draft the body in at most 90 words, opening with the substance and including both pilot numbers exactly as given.",
+                    "Enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                    "Avoid the banned openers and any variant of them.",
+                    "Sign off as \"Harish\".",
+                    "Recount subject words, body words and question marks before returning the email alone."
+                  ]
+                }
+              ],
+              "memory": [
+                "Scored artifacts so far: invoices JSON, repaired CSV, changelog markdown, outreach email.",
+                "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+                "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+                "Deduplication keeps the first occurrence; sorting follows the stated key ascending; totals are plain two-decimal strings without thousands separators.",
+                "Never carry over values, names or numbers from these notes into an answer; they come from the request only."
+              ]
+            },
+            "probeScore": 1,
+            "probeAttempts": [
+              {
+                "taskId": "invoices",
+                "variant": "public",
+                "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 2478,
+                "ms": 3514.378125000001
+              },
+              {
+                "taskId": "csv",
+                "variant": "public",
+                "raw": "id,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 2033,
+                "ms": 2510.175459000002
+              }
+            ],
+            "rationale": "Propose domain edits: a concrete checklist for work of this kind (finance ops, data cleanup), aimed at the specific failure patterns in the evidence."
+          }
+        ],
+        "composed": {
+          "harness": {
+            "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters), then build the artifact, then re-read your own draft and check it against each of those constraints before you reply. When a constraint and your draft disagree, fix the draft, not the constraint.",
+            "guardrails": [
+              "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+              "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+              "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+              "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+              "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+              "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+              "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them.",
+              "Before replying, self-check mechanically: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, and that every banned character and banned phrase is absent. Fix violations"
+            ],
+            "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, and re-count words and question marks. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+            "skills": [
+              {
+                "name": "json-record-artifacts",
+                "steps": [
+                  "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                  "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                  "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                  "Normalise currency to ISO 4217 and dates to YYYY-MM-DD.",
+                  "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                  "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+                ]
+              },
+              {
+                "name": "csv-repair",
+                "steps": [
+                  "Parse the source rows and drop every blank line.",
+                  "Write the header exactly id,name,city,total.",
+                  "Drop duplicate rows, keeping the first occurrence of each.",
+                  "Format totals as plain decimals with exactly two places and no thousands separator.",
+                  "Sort the remaining rows by id in ascending numeric order.",
+                  "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+                ]
+              },
+              {
+                "name": "changelog-assembly",
+                "steps": [
+                  "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                  "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                  "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                  "Include each feature and fix reference exactly once and only in its own section.",
+                  "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                  "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+                ]
+              },
+              {
+                "name": "email-drafting",
+                "steps": [
+                  "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                  "Draft the body in at most 90 words, opening with the substance and including every figure the request requires exactly as given.",
+                  "Avoid the banned openers and any variant of them.",
+                  "Enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                  "Close with the sign-off the request specifies, or none if it specifies none.",
+                  "Recount subject words, body words and question marks in the draft, trim until each limit is met, and return the email alone."
+                ]
+              }
+            ],
+            "memory": [
+              "Most lost points come from format, not analysis: wrong container, extra prose, wrong order, or a missed limit. Check the container and ordering first.",
+              "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+              "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+              "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+              "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+              "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+              "Formatting and content rules alone did not catch a missing required sign-off, so literal-token checks are necessary.",
+              "Next, add an explicit post-generation audit for required signatures, exact values, and forbidden phrases before returning the result."
+            ]
+          },
+          "score": 0.975,
+          "attempts": [
+            {
+              "taskId": "invoices",
+              "variant": "public",
+              "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 3275,
+              "ms": 4693.970458
+            },
+            {
+              "taskId": "csv",
+              "variant": "public",
+              "raw": "id,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 2093,
+              "ms": 1747.2277919999979
+            },
+            {
+              "taskId": "changelog",
+              "variant": "public",
+              "raw": "## Breaking\n- #412 Drop Node 18 support and require Node 20.\n\n## Added\n- #418 Add CSV export to the reports page.\n- #423 Add keyboard shortcuts for the queue view.\n\n## Fixed\n- #421 Stop duplicate webhook deliveries on retry.\n- #425 Fix timezone drift in the weekly digest.\n- #430 Fix crash when a filter returns no rows.",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 2580,
+              "ms": 2601.1192499999997
+            },
+            {
+              "taskId": "email",
+              "variant": "public",
+              "raw": "Subject: Kestrel reconciliation pilot follow-up\n\nDana,\n\nIn the pilot, invoice reconciliation time fell from 6 hours to 90 minutes per month end. Since your team runs a Python pipeline, I would like to discuss how this could fit your workflow. Could we schedule a 20 minute call next week?",
+              "score": 0.9,
+              "passed": false,
+              "failures": [
+                "missing the signature \"Harish\""
+              ],
+              "tokens": 2659,
+              "ms": 3008.584290999999
+            }
+          ],
+          "tokens": 10607
+        },
+        "lessons": [
+          "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+          "Formatting and content rules alone did not catch a missing required sign-off, so literal-token checks are necessary.",
+          "Next, add an explicit post-generation audit for required signatures, exact values, and forbidden phrases before returning the result."
+        ],
+        "harness": {
+          "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters), then build the artifact, then re-read your own draft and check it against each of those constraints before you reply. When a constraint and your draft disagree, fix the draft, not the constraint.",
+          "guardrails": [
+            "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+            "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+            "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+            "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+            "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+            "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+            "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them.",
+            "Before replying, self-check mechanically: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, and that every banned character and banned phrase is absent. Fix violations"
+          ],
+          "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, and re-count words and question marks. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+          "skills": [
+            {
+              "name": "json-record-artifacts",
+              "steps": [
+                "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                "Normalise currency to ISO 4217 and dates to YYYY-MM-DD.",
+                "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+              ]
+            },
+            {
+              "name": "csv-repair",
+              "steps": [
+                "Parse the source rows and drop every blank line.",
+                "Write the header exactly id,name,city,total.",
+                "Drop duplicate rows, keeping the first occurrence of each.",
+                "Format totals as plain decimals with exactly two places and no thousands separator.",
+                "Sort the remaining rows by id in ascending numeric order.",
+                "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+              ]
+            },
+            {
+              "name": "changelog-assembly",
+              "steps": [
+                "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                "Include each feature and fix reference exactly once and only in its own section.",
+                "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+              ]
+            },
+            {
+              "name": "email-drafting",
+              "steps": [
+                "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                "Draft the body in at most 90 words, opening with the substance and including every figure the request requires exactly as given.",
+                "Avoid the banned openers and any variant of them.",
+                "Enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                "Close with the sign-off the request specifies, or none if it specifies none.",
+                "Recount subject words, body words and question marks in the draft, trim until each limit is met, and return the email alone."
+              ]
+            }
+          ],
+          "memory": [
+            "Most lost points come from format, not analysis: wrong container, extra prose, wrong order, or a missed limit. Check the container and ordering first.",
+            "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+            "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+            "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+            "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+            "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+            "Formatting and content rules alone did not catch a missing required sign-off, so literal-token checks are necessary.",
+            "Next, add an explicit post-generation audit for required signatures, exact values, and forbidden phrases before returning the result."
+          ]
+        },
+        "elapsedMs": 27875.296791
+      },
+      {
+        "step": 2,
+        "candidates": [
+          {
+            "kind": "invariant",
+            "harness": {
+              "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters, and every literal token it requires such as a signature, name, ID or exact figure), then build the artifact, then re-read your own draft and check it against each of those constraints before you reply. When a constraint and your draft disagree, fix the draft, not the constraint. A named token that is absent is a failure even when everything else is correct.",
+              "guardrails": [
+                "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+                "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+                "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+                "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+                "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+                "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+                "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them. Every figure, identifier",
+                "Before replying, self-check mechanically against a checklist of the request's literal requirements: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, the named sign-of"
+              ],
+              "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, re-count words and question marks, and tick off every literal token the request names (signature, name, ID, label, exact figures) as present verbatim. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+              "skills": [
+                {
+                  "name": "json-record-artifacts",
+                  "steps": [
+                    "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                    "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                    "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                    "Normalise currency to ISO 4217 and dates to YYYY-MM-DD.",
+                    "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                    "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+                  ]
+                },
+                {
+                  "name": "csv-repair",
+                  "steps": [
+                    "Parse the source rows and drop every blank line.",
+                    "Write the header exactly id,name,city,total.",
+                    "Drop duplicate rows, keeping the first occurrence of each.",
+                    "Format totals as plain decimals with exactly two places and no thousands separator.",
+                    "Sort the remaining rows by id in ascending numeric order.",
+                    "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+                  ]
+                },
+                {
+                  "name": "changelog-assembly",
+                  "steps": [
+                    "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                    "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                    "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                    "Include each feature and fix reference exactly once and only in its own section.",
+                    "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                    "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+                  ]
+                },
+                {
+                  "name": "email-drafting",
+                  "steps": [
+                    "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                    "Draft the body in at most 90 words, opening with the substance, and reproduce every figure the request supplies exactly as given.",
+                    "Avoid the banned openers and any variant of them.",
+                    "Enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                    "End with the sign-off the request names, copied verbatim on its own line after the body; if it names none, add no invented signature.",
+                    "Recount subject words, body words and question marks, confirm the named sign-off and each required figure appears verbatim, trim until every limit is met, and return the email alone."
+                  ]
+                }
+              ],
+              "memory": [
+                "Most lost points come from format, not analysis: wrong container, extra prose, wrong order, or a missed limit. Check the container and ordering first.",
+                "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+                "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+                "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+                "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+                "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+                "A missed required signature shows that limits and style rules are not enough: the audit must also confirm that every token the request names by name (signature, name, ID, label, exact figures) is physically present and verbatim.",
+                "Required-but-easy-to-forget tokens live at the edge of the artifact, so check the first and last lines of the draft explicitly, and check that every supplied figure survived unchanged."
+              ]
+            },
+            "probeScore": 0.95,
+            "probeAttempts": [
+              {
+                "taskId": "invoices",
+                "variant": "public",
+                "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 4088,
+                "ms": 5177.650792
+              },
+              {
+                "taskId": "email",
+                "variant": "public",
+                "raw": "Subject: Pilot results and next steps\n\nDana Whitfield, head of platform at Kestrel Freight,\n\nIn the pilot, your team cut invoice reconciliation from 6 hours to 90 minutes per month end. Since your team runs a Python pipeline, I would like to discuss how to extend this. Could we schedule a 20 minute call next week?",
+                "score": 0.9,
+                "passed": false,
+                "failures": [
+                  "missing the signature \"Harish\""
+                ],
+                "tokens": 4238,
+                "ms": 7103.747458000005
+              }
+            ],
+            "rationale": "Propose invariant edits: general habits that would prevent this class of failure on ANY analytical task (output discipline, verification steps, arithmetic and format checks)."
+          },
+          {
+            "kind": "domain",
+            "harness": {
+              "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters) and separately list every literal token the request requires (names, figures, references, exact phrases, sign-offs). Then build the artifact, then re-read your own draft and check it against each of those constraints, including that every required literal token appears character-for-character. When a constraint and your draft disagree, fix the draft, not the constraint.",
+              "guardrails": [
+                "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+                "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+                "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+                "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+                "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+                "Required literals and record fidelity: any name, figure, reference, label, sign-off or exact phrase the request names must appear character-for-character, in the position the format assigns it. Never paraphrase, round, reformat, merge or omit a required literal. Never invent, guess, pad, drop or mer",
+                "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+                "Before replying, self-check mechanically: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, and that every banned character and banned phrase is absent; then confirm e"
+              ],
+              "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, and re-count words and question marks. Before returning, write out the list of literal tokens the request requires (every supplied number, name, reference, exact phrase and the sign-off) and tick each one off against the draft; a missing required token is a failure even when the prose and format are correct. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+              "skills": [
+                {
+                  "name": "json-record-artifacts",
+                  "steps": [
+                    "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                    "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                    "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                    "Normalise currency to ISO 4217 and dates to YYYY-MM-DD, copying every supplied vendor name, reference and figure verbatim.",
+                    "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                    "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+                  ]
+                },
+                {
+                  "name": "csv-repair",
+                  "steps": [
+                    "Parse the source rows and drop every blank line.",
+                    "Write the header exactly id,name,city,total.",
+                    "Drop duplicate rows, keeping the first occurrence of each.",
+                    "Format totals as plain decimals with exactly two places and no thousands separator.",
+                    "Sort the remaining rows by id in ascending numeric order.",
+                    "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+                  ]
+                },
+                {
+                  "name": "changelog-assembly",
+                  "steps": [
+                    "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                    "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                    "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                    "Include each feature and fix reference exactly once and only in its own section, copied character-for-character.",
+                    "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                    "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+                  ]
+                },
+                {
+                  "name": "email-drafting",
+                  "steps": [
+                    "List the required literals first: every number the request supplies, every name, and the exact sign-off text; these are content, not style, and must survive editing.",
+                    "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                    "Draft the body in at most 90 words, opening with the substance and including every required figure exactly as given, unrounded and unreworded.",
+                    "Avoid the banned openers and any variant of them; enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                    "End with the sign-off the request names as the final line, the literal name on its own line with no title, greeting or added punctuation; if the request names no sign-off, end with the body.",
+                    "Recount subject words, body words and question marks, tick off each required literal against the draft, and return the email alone."
+                  ]
+                }
+              ],
+              "memory": [
+                "Most lost points come from format, not analysis: wrong container, extra prose, wrong order, or a missed limit. Check the container and ordering first.",
+                "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+                "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+                "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+                "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+                "The last lost point was a missing required sign-off: required literal tokens (names, supplied figures, references, exact phrases, sign-offs) are graded content and must be copied verbatim, not treated as stylistic choices.",
+                "A sign-off named in the request belongs on the final line of the email as the bare literal name; dropping it or replacing it with a generic closing fails the artifact.",
+                "A final constraint checklist that verifies every literal requirement, including required literals, before output moved the score sharply, so run it every time rather than only on complex tasks."
+              ]
+            },
+            "probeScore": 0.95,
+            "probeAttempts": [
+              {
+                "taskId": "invoices",
+                "variant": "public",
+                "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+                "score": 1,
+                "passed": true,
+                "failures": [],
+                "tokens": 4640,
+                "ms": 6686.370375000006
+              },
+              {
+                "taskId": "email",
+                "variant": "public",
+                "raw": "Subject: Pilot results and next steps\n\nDana Whitfield, head of platform at Kestrel Freight,\n\nDuring the pilot, invoice reconciliation time fell from 6 hours to 90 minutes per month end. Your team runs a Python pipeline, so the next step is to review how that fits your workflow. Could we hold a 20 minute call next week?",
+                "score": 0.9,
+                "passed": false,
+                "failures": [
+                  "missing the signature \"Harish\""
+                ],
+                "tokens": 4075,
+                "ms": 6266.856707999999
+              }
+            ],
+            "rationale": "Propose domain edits: a concrete checklist for work of this kind (finance ops, customer comms), aimed at the specific failure patterns in the evidence."
+          }
+        ],
+        "composed": {
+          "harness": {
+            "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters) and separately list every literal token the request requires (names, figures, references, exact phrases, sign-offs). Then build the artifact, then re-read your own draft and check it against each of those constraints, including that every required literal token appears character-for-character. When a constraint and your draft disagree, fix the draft, not the constraint. A named token that is absent is a failure even when everything else is correct.",
+            "guardrails": [
+              "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+              "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+              "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+              "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+              "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+              "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+              "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them. Every name, figure, refe",
+              "Before replying, self-check mechanically against a checklist of the request's literal requirements: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, the named sign-of"
+            ],
+            "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, re-count words and question marks, and tick off every literal token the request names (signature, name, ID, label, exact figures) as present verbatim. Required-but-easy-to-forget tokens live at the edges of the artifact, so check the first and last lines of the draft explicitly. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+            "skills": [
+              {
+                "name": "json-record-artifacts",
+                "steps": [
+                  "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                  "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                  "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                  "Normalise currency to ISO 4217 and dates to YYYY-MM-DD, copying every supplied vendor name, reference and figure verbatim.",
+                  "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                  "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+                ]
+              },
+              {
+                "name": "csv-repair",
+                "steps": [
+                  "Parse the source rows and drop every blank line.",
+                  "Write the header exactly id,name,city,total.",
+                  "Drop duplicate rows, keeping the first occurrence of each.",
+                  "Format totals as plain decimals with exactly two places and no thousands separator.",
+                  "Sort the remaining rows by id in ascending numeric order.",
+                  "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+                ]
+              },
+              {
+                "name": "changelog-assembly",
+                "steps": [
+                  "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                  "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                  "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                  "Include each feature and fix reference exactly once and only in its own section, copied character-for-character.",
+                  "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                  "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+                ]
+              },
+              {
+                "name": "email-drafting",
+                "steps": [
+                  "List the required literals first: every number the request supplies, every name, and the exact sign-off text; these are content, not style, and must survive editing.",
+                  "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                  "Draft the body in at most 90 words, opening with the substance and including every required figure exactly as given, unrounded and unreworded.",
+                  "Avoid the banned openers and any variant of them; enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                  "End with the sign-off the request names as the final line, the bare literal on its own line with no title, greeting or added punctuation; if the request names no sign-off, end with the body.",
+                  "Recount subject words, body words and question marks, tick off each required literal against the draft, and return the email alone."
+                ]
+              }
+            ],
+            "memory": [
+              "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+              "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+              "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+              "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+              "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+              "A missed required signature shows that limits and style rules are not enough: required literal tokens (names, supplied figures, references, exact phrases, sign-offs) are graded content and must be physically present and verbatim.",
+              "Required-but-easy-to-forget tokens live at the edge of the artifact, so check the first and last lines of the draft explicitly, and check that every supplied figure survived unchanged.",
+              "The edit did not move the score because it failed to enforce the required closing signature.",
+              "Add a final validation pass that checks every mandated element, including the exact sign-off, before output.",
+              "Use deterministic post-processing to append or verify required signatures instead of relying on prompt wording."
+            ]
+          },
+          "score": 0.975,
+          "attempts": [
+            {
+              "taskId": "invoices",
+              "variant": "public",
+              "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 4753,
+              "ms": 6257.978332999999
+            },
+            {
+              "taskId": "csv",
+              "variant": "public",
+              "raw": "id,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 2323,
+              "ms": 1678.4182910000018
+            },
+            {
+              "taskId": "changelog",
+              "variant": "public",
+              "raw": "## Breaking\n- #412 Drop Node 18 support and require Node 20\n\n## Added\n- #418 Add CSV export to the reports page\n- #423 Add keyboard shortcuts for the queue view\n\n## Fixed\n- #421 Stop duplicate webhook deliveries on retry\n- #425 Fix timezone drift in the weekly digest\n- #430 Fix crash when a filter returns no rows",
+              "score": 1,
+              "passed": true,
+              "failures": [],
+              "tokens": 2599,
+              "ms": 2054.888958000003
+            },
+            {
+              "taskId": "email",
+              "variant": "public",
+              "raw": "Subject: Invoice reconciliation pilot follow-up\n\nDana Whitfield, head of platform at Kestrel Freight, during the pilot we cut invoice reconciliation time from 6 hours to 90 minutes per month end. Your team runs a Python pipeline, so the next step is to see where that fits your workflow. Could we book a 20 minute call next week?",
+              "score": 0.9,
+              "passed": false,
+              "failures": [
+                "missing the signature \"Harish\""
+              ],
+              "tokens": 3381,
+              "ms": 3658.087667
+            }
+          ],
+          "tokens": 13056
+        },
+        "lessons": [
+          "The edit did not move the score because it failed to enforce the required closing signature.",
+          "Add a final validation pass that checks every mandated element, including the exact sign-off, before output.",
+          "Use deterministic post-processing to append or verify required signatures instead of relying on prompt wording."
+        ],
+        "harness": {
+          "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters) and separately list every literal token the request requires (names, figures, references, exact phrases, sign-offs). Then build the artifact, then re-read your own draft and check it against each of those constraints, including that every required literal token appears character-for-character. When a constraint and your draft disagree, fix the draft, not the constraint. A named token that is absent is a failure even when everything else is correct.",
+          "guardrails": [
+            "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+            "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+            "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+            "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+            "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+            "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+            "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them. Every name, figure, refe",
+            "Before replying, self-check mechanically against a checklist of the request's literal requirements: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, the named sign-of"
+          ],
+          "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, re-count words and question marks, and tick off every literal token the request names (signature, name, ID, label, exact figures) as present verbatim. Required-but-easy-to-forget tokens live at the edges of the artifact, so check the first and last lines of the draft explicitly. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+          "skills": [
+            {
+              "name": "json-record-artifacts",
+              "steps": [
+                "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+                "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+                "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+                "Normalise currency to ISO 4217 and dates to YYYY-MM-DD, copying every supplied vendor name, reference and figure verbatim.",
+                "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+                "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+              ]
+            },
+            {
+              "name": "csv-repair",
+              "steps": [
+                "Parse the source rows and drop every blank line.",
+                "Write the header exactly id,name,city,total.",
+                "Drop duplicate rows, keeping the first occurrence of each.",
+                "Format totals as plain decimals with exactly two places and no thousands separator.",
+                "Sort the remaining rows by id in ascending numeric order.",
+                "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+              ]
+            },
+            {
+              "name": "changelog-assembly",
+              "steps": [
+                "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+                "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+                "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+                "Include each feature and fix reference exactly once and only in its own section, copied character-for-character.",
+                "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+                "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+              ]
+            },
+            {
+              "name": "email-drafting",
+              "steps": [
+                "List the required literals first: every number the request supplies, every name, and the exact sign-off text; these are content, not style, and must survive editing.",
+                "Write the subject line first as 'Subject:' followed by at most 6 words.",
+                "Draft the body in at most 90 words, opening with the substance and including every required figure exactly as given, unrounded and unreworded.",
+                "Avoid the banned openers and any variant of them; enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+                "End with the sign-off the request names as the final line, the bare literal on its own line with no title, greeting or added punctuation; if the request names no sign-off, end with the body.",
+                "Recount subject words, body words and question marks, tick off each required literal against the draft, and return the email alone."
+              ]
+            }
+          ],
+          "memory": [
+            "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+            "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+            "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+            "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+            "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+            "A missed required signature shows that limits and style rules are not enough: required literal tokens (names, supplied figures, references, exact phrases, sign-offs) are graded content and must be physically present and verbatim.",
+            "Required-but-easy-to-forget tokens live at the edge of the artifact, so check the first and last lines of the draft explicitly, and check that every supplied figure survived unchanged.",
+            "The edit did not move the score because it failed to enforce the required closing signature.",
+            "Add a final validation pass that checks every mandated element, including the exact sign-off, before output.",
+            "Use deterministic post-processing to append or verify required signatures instead of relying on prompt wording."
+          ]
+        },
+        "elapsedMs": 33425.839292000004
+      }
+    ],
+    "finalHarness": {
+      "systemPrompt": "You are a precise analytical assistant for finance-ops and data-cleanup work. Every reply is the requested artifact and nothing else: no preamble, no explanation, no code fence, no closing note, no summary of your work. First identify the exact output format the request names (container, key names, header, headings, ordering, limits, banned characters) and separately list every literal token the request requires (names, figures, references, exact phrases, sign-offs). Then build the artifact, then re-read your own draft and check it against each of those constraints, including that every required literal token appears character-for-character. When a constraint and your draft disagree, fix the draft, not the constraint. A named token that is absent is a failure even when everything else is correct.",
+      "guardrails": [
+        "Return only the requested artifact: no preamble, no closing remarks, no explanation, no code fence unless the requested format is itself a code block, and no headings or tables other than the ones the request specifies. A markdown table is never an acceptable substitute for JSON. The first character",
+        "JSON record artifacts (invoices, ledger, line items): return one JSON array only, sorted by dueDate ascending, with no prose and no code fence. Each object has exactly the keys vendor, amountCents, currency, dueDate, in that order, with no extra keys. amountCents is the final payable amount in integ",
+        "CSV artifacts: return the repaired CSV only, no prose and no code fence. Header exactly id,name,city,total. Drop blank lines, drop duplicate rows keeping the first occurrence, sort rows by id ascending, write totals as plain decimals with two places and no thousands separator, and quote only fields ",
+        "Changelog artifacts: return markdown only, no prose before or after. Exactly three sections, in this order: \"## Breaking\", \"## Added\", \"## Fixed\". One bullet per shipped change, each bullet at most 14 words, whole document at most 120 words. Include each feature and fix reference exactly once, in th",
+        "Email artifacts: return the email only, a line starting \"Subject:\" and then the body. Subject at most 6 words. Body at most 90 words. Exactly one question mark in the whole email. No exclamation marks, no links, no em dashes. Do not open with \"I hope this finds you well\", \"quick question\", \"reaching",
+        "Compute money in integer cents: apply every discount, credit and adjustment to the gross, round half up, and never emit floats, thousands separators, currency symbols or per-item arithmetic notes.",
+        "Never invent, guess, pad, drop or merge records beyond the deduplication or exclusion rule the request states. Keep every source field value verbatim except where the required format changes it, and drop entries whose required values are missing rather than fabricating them. Every name, figure, refe",
+        "Before replying, self-check mechanically against a checklist of the request's literal requirements: count subject words, body words, words per bullet, total words, bullets, sections and question marks; confirm the header line, the section order, the sort order, the exact key names, the named sign-of"
+      ],
+      "toolGuidance": "No external tools are needed or assumed. Read the request carefully and do all parsing, deduplication, sorting, unit conversion, arithmetic and counting yourself, then verify the finished artifact line by line against the stated constraints: recompute decimal-to-cent conversions, re-check the stated sort key, re-scan for banned characters, re-count words and question marks, and tick off every literal token the request names (signature, name, ID, label, exact figures) as present verbatim. Required-but-easy-to-forget tokens live at the edges of the artifact, so check the first and last lines of the draft explicitly. Do not narrate the work, do not show intermediate steps, and do not add a note about what you changed. If a rule cannot be satisfied simultaneously with another, satisfy the format rule and drop the least important content rather than emitting extra prose.",
+      "skills": [
+        {
+          "name": "json-record-artifacts",
+          "steps": [
+            "Read off the exact key list the request names and use those key names verbatim, in that order, with no extra keys.",
+            "Build one object per record, collapsing duplicates by record identity and excluding items exactly as the request specifies.",
+            "Compute each amount in integer cents: apply discounts, credits and adjustments to the gross, round half up, and store the final payable figure.",
+            "Normalise currency to ISO 4217 and dates to YYYY-MM-DD, copying every supplied vendor name, reference and figure verbatim.",
+            "Sort the array by the required key ascending, with a stable tiebreak so the order is reproducible.",
+            "Emit only the array: first character '[', last character ']', no prose, no fence, no trailing commentary."
+          ]
+        },
+        {
+          "name": "csv-repair",
+          "steps": [
+            "Parse the source rows and drop every blank line.",
+            "Write the header exactly id,name,city,total.",
+            "Drop duplicate rows, keeping the first occurrence of each.",
+            "Format totals as plain decimals with exactly two places and no thousands separator.",
+            "Sort the remaining rows by id in ascending numeric order.",
+            "Quote only fields that contain a comma, leave every other field unquoted, and emit the CSV with no prose and no code fence."
+          ]
+        },
+        {
+          "name": "changelog-assembly",
+          "steps": [
+            "Classify each shipped change as a breaking change, a feature or a fix, and discard chores entirely so their references never appear.",
+            "Create exactly three sections in this order: '## Breaking', '## Added', '## Fixed'.",
+            "Put one bullet in Breaking naming the new requirement, one bullet per feature under Added, and one bullet per fix under Fixed.",
+            "Include each feature and fix reference exactly once and only in its own section, copied character-for-character.",
+            "Keep every bullet to at most 14 words and the whole document to at most 120 words.",
+            "Strip every em dash, en dash and semicolon by rephrasing, then output markdown only with no prose before or after."
+          ]
+        },
+        {
+          "name": "email-drafting",
+          "steps": [
+            "List the required literals first: every number the request supplies, every name, and the exact sign-off text; these are content, not style, and must survive editing.",
+            "Write the subject line first as 'Subject:' followed by at most 6 words.",
+            "Draft the body in at most 90 words, opening with the substance and including every required figure exactly as given, unrounded and unreworded.",
+            "Avoid the banned openers and any variant of them; enforce exactly one question mark in the whole email, zero exclamation marks, no links and no em dashes.",
+            "End with the sign-off the request names as the final line, the bare literal on its own line with no title, greeting or added punctuation; if the request names no sign-off, end with the body.",
+            "Recount subject words, body words and question marks, tick off each required literal against the draft, and return the email alone."
+          ]
+        }
+      ],
+      "memory": [
+        "Format violations zero out otherwise correct work: a prose answer or markdown table on a JSON task scores nothing.",
+        "Mechanical checks are literal: exact key names, exact header text, exact heading text and order, exact word and question-mark counts, and banned characters including em dashes, en dashes, semicolons and exclamation marks.",
+        "Counted limits are checked by counting, not by estimating: count words, bullets, question marks and sections in the actual draft.",
+        "Deduplication keeps the first occurrence, sorting follows the stated key ascending, totals are plain two-decimal strings without thousands separators, and numeric answers are recomputed once from scratch before being emitted.",
+        "A final constraint checklist that verifies every literal requirement before output moved the score sharply.",
+        "A missed required signature shows that limits and style rules are not enough: required literal tokens (names, supplied figures, references, exact phrases, sign-offs) are graded content and must be physically present and verbatim.",
+        "Required-but-easy-to-forget tokens live at the edge of the artifact, so check the first and last lines of the draft explicitly, and check that every supplied figure survived unchanged.",
+        "The edit did not move the score because it failed to enforce the required closing signature.",
+        "Add a final validation pass that checks every mandated element, including the exact sign-off, before output.",
+        "Use deterministic post-processing to append or verify required signatures instead of relying on prompt wording."
+      ]
+    },
+    "tuned": {
+      "score": 0.975,
+      "attempts": [
+        {
+          "taskId": "invoices",
+          "variant": "public",
+          "raw": "[{\"vendor\":\"Kestrel Freight\",\"amountCents\":86000,\"currency\":\"EUR\",\"dueDate\":\"2026-03-26\"},{\"vendor\":\"Brightline Studio\",\"amountCents\":96360,\"currency\":\"USD\",\"dueDate\":\"2026-04-01\"},{\"vendor\":\"Vantablack Labs\",\"amountCents\":35000,\"currency\":\"USD\",\"dueDate\":\"2026-04-24\"},{\"vendor\":\"Halcyon Cloud\",\"amountCents\":149600,\"currency\":\"USD\",\"dueDate\":\"2026-05-07\"}]",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 4753,
+          "ms": 6257.978332999999
+        },
+        {
+          "taskId": "csv",
+          "variant": "public",
+          "raw": "id,name,city,total\n1,Globex,Mumbai,980.00\n2,\"Initech, Ltd.\",Delhi,1500.00\n3,\"Acme, Inc.\",Pune,1240.50\n4,Umbrella,Chennai,1200.50\n5,\"Wonka, Ltd.\",Goa,75.00\n6,Nakatomi,Hyderabad,0.00",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 2323,
+          "ms": 1678.4182910000018
+        },
+        {
+          "taskId": "changelog",
+          "variant": "public",
+          "raw": "## Breaking\n- #412 Drop Node 18 support and require Node 20\n\n## Added\n- #418 Add CSV export to the reports page\n- #423 Add keyboard shortcuts for the queue view\n\n## Fixed\n- #421 Stop duplicate webhook deliveries on retry\n- #425 Fix timezone drift in the weekly digest\n- #430 Fix crash when a filter returns no rows",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 2599,
+          "ms": 2054.888958000003
+        },
+        {
+          "taskId": "email",
+          "variant": "public",
+          "raw": "Subject: Invoice reconciliation pilot follow-up\n\nDana Whitfield, head of platform at Kestrel Freight, during the pilot we cut invoice reconciliation time from 6 hours to 90 minutes per month end. Your team runs a Python pipeline, so the next step is to see where that fits your workflow. Could we book a 20 minute call next week?",
+          "score": 0.9,
+          "passed": false,
+          "failures": [
+            "missing the signature \"Harish\""
+          ],
+          "tokens": 3381,
+          "ms": 3658.087667
+        }
+      ]
+    },
+    "holdout": {
+      "score": 0.975,
+      "attempts": [
+        {
+          "taskId": "invoices",
+          "variant": "holdout",
+          "raw": "[{\"vendor\":\"Corvid Analytics\",\"amountCents\":207900,\"currency\":\"USD\",\"dueDate\":\"2026-05-19\"},{\"vendor\":\"Hollowpoint Media\",\"amountCents\":127550,\"currency\":\"GBP\",\"dueDate\":\"2026-05-31\"},{\"vendor\":\"Meridian Grid\",\"amountCents\":40500,\"currency\":\"EUR\",\"dueDate\":\"2026-06-14\"},{\"vendor\":\"Ninefold Robotics\",\"amountCents\":90000,\"currency\":\"USD\",\"dueDate\":\"2026-07-08\"}]",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 4334,
+          "ms": 5467.132083000004
+        },
+        {
+          "taskId": "csv",
+          "variant": "holdout",
+          "raw": "id,name,city,total\n2,Zentek,Denver,110.00\n5,\"Hooli, Inc.\",Palo Alto,2215.75\n7,\"Soylent, Corp.\",Austin,3400.25\n9,Vehement,Chennai,950.50\n11,Massive Dynamic,Sunnyvale,2000.00",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 2463,
+          "ms": 1866.4425000000047
+        },
+        {
+          "taskId": "changelog",
+          "variant": "holdout",
+          "raw": "## Breaking\n- #501 Remove the legacy XML importer and use the JSON importer\n\n## Added\n- #506 Bulk approve pending requests\n- #511 Audit log retention setting\n\n## Fixed\n- #509 Fix truncated names in exported PDFs\n- #514 Fix retry storm when the queue drains\n- #520 Fix wrong cursor on the archived tab",
+          "score": 1,
+          "passed": true,
+          "failures": [],
+          "tokens": 2792,
+          "ms": 2559.8834170000046
+        },
+        {
+          "taskId": "email",
+          "variant": "holdout",
+          "raw": "Subject: Halcyon Cloud close pilot follow-up\n\nMarcus Bell, director of operations at Halcyon Cloud,\n\nIn the pilot, we cut your nightly close from 4 hours to 35 minutes. Since your team runs a Go service, I would like to understand what made that gain possible and where it could apply next.\n\nCould we book a 20 minute call next week?",
+          "score": 0.9,
+          "passed": false,
+          "failures": [
+            "missing the signature \"Harish\""
+          ],
+          "tokens": 3324,
+          "ms": 4536.583750000005
+        }
+      ]
+    },
+    "usage": {
+      "promptTokens": 53139,
+      "completionTokens": 49603,
+      "calls": 32
+    },
+    "startedAt": "2026-10-18T12:19:21.761Z",
+    "elapsedMs": 70771.09208300001
+  }
+}
