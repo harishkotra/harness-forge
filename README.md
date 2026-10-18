@@ -6,7 +6,13 @@ Give it four underspecified briefs and a one line prompt. A fixed model scores 1
 
 This is a small, runnable take on [Harness²](https://github.com/google-research/harness2) (Google Research, arXiv 2610.14224), where the harness is everything around the model (system prompt, guardrails, tool guidance, memory, skills) and the weights never move.
 
----
+<img width="2984" height="3232" alt="screencapture-localhost-5199-2026-10-18-23_15_49" src="https://github.com/user-attachments/assets/9867e512-f9c0-4bba-9503-a763cf7452c3" />
+<img width="2984" height="2518" alt="screencapture-localhost-5199-2026-10-18-23_14_05" src="https://github.com/user-attachments/assets/ccf9a1fc-3e96-42c5-92ea-3f70a50cf9b2" />
+<img width="2984" height="2514" alt="screencapture-localhost-5199-2026-10-18-23_14_26" src="https://github.com/user-attachments/assets/aad19e57-a2e1-48a7-bdeb-09b227e63397" />
+<img width="1458" height="1248" alt="Screenshot at Oct 18 23-15-20" src="https://github.com/user-attachments/assets/bc35e9e3-6ce4-440c-a639-19715ffde8f0" />
+<img width="2984" height="6672" alt="screencapture-localhost-5199-2026-10-18-23_15_26" src="https://github.com/user-attachments/assets/07f4b118-caf3-432f-9d2d-404206feb849" />
+<img width="2984" height="2576" alt="screencapture-localhost-5199-2026-10-18-23_15_36" src="https://github.com/user-attachments/assets/6478872f-f572-4cd7-8aa8-52962b40cb2b" />
+
 
 ## Contents
 
